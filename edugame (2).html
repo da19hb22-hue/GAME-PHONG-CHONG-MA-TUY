@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHÒNG, CHỐNG MA TÚY: HỌC SINH CHỦ ĐỘNG BẢO VỆ BẢN THÂN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyan: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+        }
+        .animate-bounce-slow {
+            animation: bounce 3s infinite;
+        }
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-y-auto pb-8 flex flex-col items-center justify-between p-4 text-cyan-950">
+
+    <!-- Audio Elements -->
+    <audio id="sound-correct" src="https://res.cloudinary.com/dcgxb69v9/video/upload/v1777965702/1.-Tr%E1%BA%A3-l%E1%BB%9Di-%C4%91%C3%BAng_mdzy5d.wav" preload="auto"></audio>
+    <audio id="sound-wrong" src="https://res.cloudinary.com/dcgxb69v9/video/upload/v1777965710/2._Tr%E1%BA%A3-l%E1%BB%9Di-sai_srlaun.wav" preload="auto"></audio>
+
+    <!-- Top Navigation / Fullscreen Toggle -->
+    <header class="w-full max-w-4xl flex justify-between items-center mb-4 px-2">
+        <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-2xl shadow-md border border-cyan-200">
+            <span class="text-2xl">🛡️</span>
+            <span class="font-extrabold text-cyan-800 text-sm md:text-base tracking-wide">BẢO VỆ BẢN THÂN</span>
+        </div>
+        <button onclick="toggleFullScreen()" class="bg-white/80 hover:bg-cyan-100 text-cyan-800 p-3 rounded-2xl shadow-md border border-cyan-200 transition transform hover:scale-105 active:scale-95 flex items-center gap-1 text-sm font-semibold">
+            <span>🔲</span> Toàn màn hình
+        </button>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="w-full max-w-4xl flex-1 flex flex-col items-center justify-center">
+
+        <!-- SCREEN 1: START SCREEN -->
+        <div id="screen-start" class="w-full bg-white/90 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-cyan-300 text-center flex flex-col items-center space-y-6 pulse-glow">
+            <div class="w-24 h-24 bg-cyan-100 rounded-full flex items-center justify-center text-5xl shadow-inner animate-bounce-slow">
+                🛡️💊
+            </div>
+            <div class="space-y-3">
+                <span class="bg-cyan-100 text-cyan-800 text-xs md:text-sm font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider border border-cyan-300">Mini Game Giáo Dục Tương Tác</span>
+                <h1 class="text-2xl md:text-4xl lg:text-5xl font-black text-cyan-900 leading-tight uppercase tracking-tight">
+                    PHÒNG, CHỐNG MA TÚY: HỌC SINH CHỦ ĐỘNG BẢO VỆ BẢN THÂN
+                </h1>
+                <p class="text-cyan-700 max-w-xl mx-auto text-sm md:text-base font-medium">
+                    Tham gia thử thách 15 câu hỏi đa dạng để trang bị kiến thức, nhận diện ma túy núp bóng và nắm vững kỹ năng từ chối bảo vệ chính mình!
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-xl py-2">
+                <div class="bg-cyan-50 p-3 rounded-2xl border border-cyan-200 text-center">
+                    <div class="text-2xl mb-1">⏱️</div>
+                    <div class="text-xs font-bold text-cyan-800">20 Giây/Câu</div>
+                </div>
+                <div class="bg-cyan-50 p-3 rounded-2xl border border-cyan-200 text-center">
+                    <div class="text-2xl mb-1">🎯</div>
+                    <div class="text-xs font-bold text-cyan-800">15 Thử Thách</div>
+                </div>
+                <div class="bg-cyan-50 p-3 rounded-2xl border border-cyan-200 text-center">
+                    <div class="text-2xl mb-1">💡</div>
+                    <div class="text-xs font-bold text-cyan-800">Quy Tắc 4K</div>
+                </div>
+                <div class="bg-cyan-50 p-3 rounded-2xl border border-cyan-200 text-center">
+                    <div class="text-2xl mb-1">💪</div>
+                    <div class="text-xs font-bold text-cyan-800">3 Bước Thép</div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full max-w-md bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-black text-xl py-4 px-8 rounded-2xl shadow-xl transform transition hover:-translate-y-1 active:translate-y-0 border-b-4 border-cyan-700 flex items-center justify-center gap-3">
+                <span>🚀 BẮT ĐẦU THỬ THÁCH</span>
+            </button>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <div id="screen-game" class="w-full hidden flex flex-col space-y-4">
+            
+            <!-- HUD (Score, Progress, Timer) -->
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-cyan-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto justify-between">
+                    <div class="bg-cyan-100 text-cyan-900 font-extrabold px-4 py-2 rounded-xl text-sm border border-cyan-200">
+                        Câu <span id="current-q-num">1</span>/15
+                    </div>
+                    <div class="bg-amber-100 text-amber-900 font-extrabold px-4 py-2 rounded-xl text-sm border border-amber-200 flex items-center gap-1.5">
+                        <span>⭐</span> Điểm: <span id="current-score">0</span>
+                    </div>
+                </div>
+
+                <!-- Timer Bar -->
+                <div class="w-full md:w-64 bg-cyan-100 rounded-full h-4 overflow-hidden border border-cyan-200 p-0.5">
+                    <div id="timer-bar" class="bg-gradient-to-r from-cyan-400 to-cyan-600 h-full rounded-full transition-all duration-1000 w-full"></div>
+                </div>
+
+                <!-- Skip Button -->
+                <button onclick="skipQuestion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm transition flex items-center gap-1">
+                    <span>⏭️ Bỏ qua</span>
+                </button>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-cyan-200 flex flex-col space-y-6 relative overflow-hidden">
+                
+                <!-- Question Header / Type Tag -->
+                <div class="flex items-center justify-between">
+                    <span id="question-type-tag" class="bg-cyan-500 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                        Trắc Nghiệm
+                    </span>
+                    <span id="timer-text" class="text-cyan-800 font-bold text-sm bg-cyan-100 px-3 py-1 rounded-full border border-cyan-200">
+                        ⏳ 20s
+                    </span>
+                </div>
+
+                <!-- Question Content -->
+                <div class="space-y-2">
+                    <h2 id="question-text" class="text-lg md:text-2xl font-black text-cyan-950 leading-snug">
+                        Nội dung câu hỏi sẽ hiển thị ở đây...
+                    </h2>
+                    <p id="question-hint" class="text-xs md:text-sm text-cyan-600 italic font-medium">Chọn đáp án đúng nhất bên dưới:</p>
+                </div>
+
+                <!-- Answer Container (Dynamic based on game type) -->
+                <div id="answers-container" class="grid grid-cols-1 gap-3 pt-2">
+                    <!-- Dynamic Answers -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULT SCREEN -->
+        <div id="screen-result" class="w-full hidden bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-cyan-300 text-center flex flex-col items-center space-y-6">
+            <div id="result-icon" class="w-28 h-28 bg-cyan-100 rounded-full flex items-center justify-center text-6xl shadow-inner animate-bounce-slow">
+                🏆
+            </div>
+            <div class="space-y-2">
+                <span class="bg-cyan-100 text-cyan-800 text-xs md:text-sm font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider border border-cyan-300">Hoàn Thành Thử Thách</span>
+                <h2 class="text-3xl md:text-4xl font-black text-cyan-900">XUẤT SẮC HOÀN THÀNH!</h2>
+                <p class="text-cyan-700 text-base font-medium">Bạn đã hoàn thành xuất sắc các thử thách phòng, chống ma túy.</p>
+            </div>
+
+            <div class="bg-cyan-50 p-6 rounded-3xl border border-cyan-200 w-full max-w-md flex flex-col items-center space-y-2 shadow-inner">
+                <span class="text-sm font-bold text-cyan-700 uppercase tracking-wide">Tổng Điểm Của Bạn</span>
+                <div class="text-5xl font-black text-cyan-600" id="final-score">15/15</div>
+                <p id="final-comment" class="text-sm font-bold text-cyan-800 pt-2 text-center">
+                    Bạn thực sự là một tuyên truyền viên xuất sắc! 🌟
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                <button onclick="restartGame()" class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white font-extrabold text-base py-4 px-6 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 border-b-4 border-cyan-700 flex items-center justify-center gap-2">
+                    <span>🔄 Chơi Lại</span>
+                </button>
+                <button onclick="finishGame()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base py-4 px-6 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 border-b-4 border-emerald-800 flex items-center justify-center gap-2">
+                    <span>✅ HOÀN THÀNH</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Modal for Feedback -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border-4 border-cyan-200 text-center space-y-4 transform transition-all scale-100">
+            <div id="modal-icon" class="text-5xl">🎉</div>
+            <h3 id="modal-title" class="text-xl font-black text-cyan-950">Chính xác!</h3>
+            <p id="modal-message" class="text-sm text-cyan-700 font-medium">Bạn đã trả lời đúng câu hỏi này.</p>
+            <button onclick="closeModalAndNext()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 rounded-2xl shadow-lg transition">
+                Tiếp tục ➡️
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <footer class="w-full text-center mt-6 text-xs text-cyan-800 font-semibold">
+        PHÒNG, CHỐNG MA TÚY: HỌC SINH CHỦ ĐỘNG BẢO VỆ BẢN THÂN © 2026
+    </footer>
+
+    <script>
+        // Fullscreen Toggle
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Questions Data extracted strictly from SGK / Curriculum provided
+        const questionsData = [
+            {
+                type: "mcq",
+                title: "Khái niệm Ma túy",
+                question: "Theo tài liệu bài dạy và Luật Phòng, chống ma túy số 120/2025/QH15, chất ma túy là gì?",
+                options: [
+                    "Chất gây nghiện, chất hướng thần được quy định trong danh mục do Chính phủ ban hành.",
+                    "Chỉ là các loại bột trắng hoặc viên thuốc kích thích thần kinh bình thường.",
+                    "Các loại thực phẩm chức năng bổ sung năng lượng tự nhiên.",
+                    "Thảo mộc tự nhiên hoàn toàn vô hại đối với sức khỏe học sinh."
+                ],
+                correct: 0,
+                explanation: "Chất ma túy là chất gây nghiện, chất hướng thần được quy định trong danh mục chất ma túy do Chính phủ ban hành theo Luật Phòng, chống ma túy số 120/2025/QH15."
+            },
+            {
+                type: "tf",
+                title: "Đặc điểm nhận diện ma túy",
+                question: "Đúng hay Sai: Ma túy chỉ xuất hiện dưới dạng bột hoặc viên thuốc, không thể tồn tại dưới dạng khác.",
+                options: ["Đúng", "Sai"],
+                correct: 1, // Sai
+                explanation: "Sai! Ma túy không chỉ xuất hiện dưới dạng bột hay viên thuốc mà có thể tồn tại dưới nhiều dạng và được ngụy trang rất tinh vi."
+            },
+            {
+                type: "mcq",
+                title: "Nhóm thuốc phiện",
+                question: "Đâu KHÔNG PHẢI là đặc điểm của nhóm chất có nguồn gốc từ thuốc phiện (Thuốc phiện, Morphin, Heroin)?",
+                options: [
+                    "Khả năng gây nghiện rất cao và có nguy cơ tử vong.",
+                    "Tổn thương hệ thần kinh và làm suy giảm sức khỏe.",
+                    "Hoàn toàn an toàn, giúp tăng cường trí nhớ và sức khỏe thể chất.",
+                    "Có thể tồn tại dưới nhiều dạng khác nhau."
+                ],
+                correct: 2,
+                explanation: "Nhóm thuốc phiện gây nghiện rất cao, tổn thương thần kinh, suy giảm sức khỏe, nguy cơ tử vong chứ hoàn toàn không an toàn."
+            },
+            {
+                type: "mcq",
+                title: "Nhận diện Cần sa",
+                question: "Cần sa chứa chất hướng thần nào tác động lên hệ thần kinh trung ương?",
+                options: ["THC (tetrahydrocannabinol)", "Nicotine", "Caffeine", "Ethanol"],
+                correct: 0,
+                explanation: "Cần sa chứa THC (tetrahydrocannabinol) – một chất hướng thần tác động lên hệ thần kinh trung ương, gây ảo giác và mất định hướng."
+            },
+            {
+                type: "tf",
+                title: "Sự thật về Cần sa",
+                question: "Đúng hay Sai: 'Tự nhiên' có nghĩa là an toàn, nên các sản phẩm thảo mộc hoặc bánh kẹo chứa cần sa quảng cáo trên mạng là không hại.",
+                options: ["Đúng", "Sai"],
+                correct: 1, // Sai
+                explanation: "Sai! Tài liệu nhấn mạnh: 'Tự nhiên' không có nghĩa là an toàn. Cần sa có thể được ngụy trang trong bánh, kẹo, đồ uống, thảo mộc."
+            },
+            {
+                type: "mcq",
+                title: "Ma túy tổng hợp",
+                question: "Methamphetamine còn được gọi là gì và có đặc điểm nào?",
+                options: [
+                    "“Ma túy đá” – dạng tinh thể hoặc viên nén, gây ảo giác, tim đập nhanh, mất ngủ và hủy hoại thần kinh nghiêm trọng.",
+                    "“Thuốc lắc” – ở dạng viên nén nhiều màu sắc hình ảnh bắt mắt.",
+                    "“Ketamine” – ở dạng bột hoặc dung dịch gây mất ý thức.",
+                    "Thảo mộc thư giãn tự nhiên hoàn toàn vô hại."
+                ],
+                correct: 0,
+                explanation: "Methamphetamine hay còn gọi là “ma túy đá”, có dạng tinh thể hoặc viên nén, gây ảo giác, tim đập nhanh, mất ngủ kéo dài và hủy hoại thần kinh nghiêm trọng."
+            },
+            {
+                type: "mcq",
+                title: "Ma túy “núp bóng”",
+                question: "Ma túy “núp bóng” được hiểu như thế nào?",
+                options: [
+                    "Là cách các chất nguy hiểm được ngụy trang dưới dạng sản phẩm bình thường, hấp dẫn, quen thuộc để đánh lừa.",
+                    "Là một loại ma túy riêng biệt chỉ xuất hiện vào ban đêm.",
+                    "Là tên gọi khác của thuốc lá truyền thống.",
+                    "Là các loại thực phẩm bảo vệ sức khỏe có giấy phép."
+                ],
+                correct: 0,
+                explanation: "Ma túy núp bóng không phải loại riêng biệt mà là cách ngụy trang dưới dạng sản phẩm bình thường, hấp dẫn, quen thuộc nhằm khiến người dùng khó nhận biết."
+            },
+            {
+                type: "matching",
+                title: "Tác hại của ma túy",
+                question: "Nối các đối tượng chịu hậu quả của ma túy với tác hại tương ứng trong tài liệu:",
+                pairs: [
+                    { left: "1. Bản thân", right: "Hủy hoại sức khỏe thể chất, tinh thần, mất kiểm soát hành vi, tổn hại tương lai." },
+                    { left: "2. Gia đình", right: "Tổn thương tình cảm, suy giảm niềm tin, kiệt quệ kinh tế gia đình." },
+                    { left: "3. Xã hội", right: "Tăng nguy cơ tội phạm, mất an ninh trật tự, gánh nặng cai nghiện." }
+                ],
+                explanation: "Tác hại của ma túy được chia thành 3 phạm vi: bản thân, gia đình và xã hội."
+            },
+            {
+                type: "mcq",
+                title: "Nguyên nhân lôi kéo",
+                question: "Đâu KHÔNG PHẢI là nguyên nhân chính khiến học sinh dễ bị lôi kéo sử dụng chất kích thích?",
+                options: [
+                    "Sự tò mò (“thử một lần chắc không sao”) và áp lực từ bạn bè.",
+                    "Ảnh hưởng từ mạng xã hội và mong muốn hòa nhập, thể hiện bản thân.",
+                    "Buồn bã, căng thẳng, áp lực trong cuộc sống.",
+                    "Được Bộ Y tế và nhà trường khuyến khích sử dụng để tăng cường tập trung."
+                ],
+                correct: 3,
+                explanation: "Bộ Y tế và nhà trường luôn nghiêm cấm và tuyên truyền phòng chống ma túy, không có chuyện khuyến khích sử dụng."
+            },
+            {
+                type: "mcq",
+                title: "Dấu hiệu nguy cơ",
+                question: "Khi được người khác nhờ 'cầm hộ – giữ hộ – mang hộ một gói đồ', bạn nên ứng xử thế nào theo bài học?",
+                options: [
+                    "Nhận giữ hộ ngay vì nể bạn bè hoặc người quen.",
+                    "Tuyệt đối không cầm, không giữ vì đây là dấu hiệu nguy cơ cần cảnh giác.",
+                    "Nhận giữ nhưng mang về cất giấu ngay trong phòng.",
+                    "Nhận quà và mở ra xem ngay trước mặt họ."
+                ],
+                correct: 1,
+                explanation: "Dấu hiệu nguy cơ: Bị nhờ cầm hộ, giữ hộ, mang hộ một gói đồ. Quy tắc ứng xử là: Không cầm, không giữ."
+            },
+            {
+                type: "mcq",
+                title: "Quy Tắc 4K",
+                question: "Quy tắc 4K quan trọng nhất để học sinh vận dụng phòng chống ma túy gồm những gì?",
+                options: [
+                    "Không thử – Không giữ – Không theo – Không tiếp tay.",
+                    "Không ăn – Không uống – Không ngủ – Không chơi.",
+                    "Không học – Không chơi – Không nói – Không cười.",
+                    "Không mua – Không bán – Không tặng – Không cho."
+                ],
+                correct: 0,
+                explanation: "Quy tắc 4K trọng tâm: K1 - Không thử; K2 - Không giữ; K3 - Không theo (Nói không); K4 - Không tiếp tay."
+            },
+            {
+                type: "mcq",
+                title: "Kỹ năng từ chối",
+                question: "Theo '3 bước thép' trong kỹ năng từ chối khi gặp rủ rê, Bước 1 và Bước 2 là gì?",
+                options: [
+                    "Bước 1: Im lặng bỏ đi ngay. Bước 2: Khóc lớn gọi bố mẹ.",
+                    "Bước 1: Nói KHÔNG rõ ràng (“Mình không dùng thứ đó”). Bước 2: Đưa ra lý do ngắn gọn (“Mình không muốn và không cần”).",
+                    "Bước 1: Đồng ý thử một chút. Bước 2: Sau đó từ chối.",
+                    "Bước 1: Tranh luận kéo dài với người rủ rê. Bước 2: Báo công an ngay lập tức."
+                ],
+                correct: 1,
+                explanation: "3 bước thép: Bước 1: Nói KHÔNG rõ ràng; Bước 2: Đưa ra lý do ngắn gọn; Bước 3: Rời khỏi tình huống và tìm người giúp."
+            },
+            {
+                type: "tf",
+                title: "Trách nhiệm phòng chống",
+                question: "Đúng hay Sai: Phòng, chống ma túy là trách nhiệm riêng của cơ quan công an và nhà trường, học sinh không cần bận tâm.",
+                options: ["Đúng", "Sai"],
+                correct: 1, // Sai
+                explanation: "Sai! Phòng, chống ma túy là trách nhiệm của toàn xã hội, trong đó học sinh có trách nhiệm tự bảo vệ bản thân, hỗ trợ bạn bè, phối hợp với gia đình, nhà trường."
+            },
+            {
+                type: "mcq",
+                title: "Hành vi bị nghiêm cấm",
+                question: "Theo Điều 5 Luật số 120/2025/QH15 được trích trong bài, hành vi nào sau đây bị nghiêm cấm?",
+                options: [
+                    "Sản xuất, tàng trữ, vận chuyển, mua bán, tổ chức sử dụng trái phép chất ma túy.",
+                    "Kỳ thị người sử dụng trái phép chất ma túy, người cai nghiện và người sau cai nghiện.",
+                    "Trồng cây có chứa chất ma túy hoặc hướng dẫn trồng.",
+                    "Tất cả các hành vi trên đều bị nghiêm cấm theo luật định."
+                ],
+                correct: 3,
+                explanation: "Tất cả các hành vi trên đều thuộc danh mục bị nghiêm cấm theo Luật Phòng, chống ma túy."
+            },
+            {
+                type: "mcq",
+                title: "Thông điệp cuối bài",
+                question: "Thông điệp quan trọng nhất dành cho mỗi học sinh sau bài học phòng, chống ma túy là gì?",
+                options: [
+                    "Hãy là một tuyên truyền viên tích cực, kiên quyết nói KHÔNG với ma túy để bảo vệ bản thân, gia đình và xã hội.",
+                    "Có thể thử ma túy một lần nếu không ai biết.",
+                    "Giữ hộ đồ đạc giúp bạn bè khi được nhờ vả mà không cần hỏi.",
+                    "Che giấu việc bạn bè sử dụng ma túy để giữ tình bạn."
+                ],
+                correct: 0,
+                explanation: "Thông điệp: 'Mỗi học sinh hãy là một tuyên truyền viên tích cực, kiên quyết nói KHÔNG với ma túy để bảo vệ bản thân, gia đình và xây dựng môi trường học đường an toàn, lành mạnh.'"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer = null;
+        let timeLeft = 20;
+        let answeredCurrent = false;
+
+        // Sound helpers
+        const soundCorrect = document.getElementById('sound-correct');
+        const soundWrong = document.getElementById('sound-wrong');
+
+        function playSound(isCorrect) {
+            try {
+                if (isCorrect) {
+                    soundCorrect.currentTime = 0;
+                    soundCorrect.play().catch(e => console.log(e));
+                } else {
+                    soundWrong.currentTime = 0;
+                    soundWrong.play().catch(e => console.log(e));
+                }
+            } catch (err) {
+                console.log("Audio play error:", err);
+            }
+        }
+
+        function startGame() {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questionsData.length) {
+                endGame();
+                return;
+            }
+
+            answeredCurrent = false;
+            const q = questionsData[currentQuestionIndex];
+            
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('current-score').innerText = score;
+            document.getElementById('question-type-tag').innerText = getTypeName(q.type);
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('question-hint').innerText = q.type === 'matching' ? 'Bấm chọn các vế tương ứng ở cột trái và phải để nối:' : 'Chọn đáp án đúng nhất bên dưới:';
+
+            const container = document.getElementById('answers-container');
+            container.innerHTML = '';
+
+            if (q.type === 'mcq' || q.type === 'tf') {
+                // Shuffle options for MCQ
+                let optionsWithIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+                if (q.type === 'mcq') {
+                    optionsWithIndex.sort(() => Math.random() - 0.5);
+                }
+
+                optionsWithIndex.forEach((item, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-4 rounded-2xl bg-cyan-50 hover:bg-cyan-100 border-2 border-cyan-200 text-cyan-950 font-bold transition transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-between shadow-sm";
+                    btn.innerHTML = `<span><strong class="text-cyan-600 mr-2">${String.fromCharCode(65 + idx)}.</strong> ${item.text}</span>`;
+                    btn.onclick = () => checkAnswer(item.originalIndex, q.correct, btn);
+                    container.appendChild(btn);
+                });
+            } else if (q.type === 'matching') {
+                renderMatchingGame(q);
+            }
+
+            resetTimer();
+        }
+
+        function getTypeName(type) {
+            switch(type) {
+                case 'mcq': return 'Trắc Nghiệm';
+                case 'tf': return 'Đúng / Sai';
+                case 'matching': return 'Nối Cặp';
+                default: return 'Thử Thách';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 20;
+            const timerBar = document.getElementById('timer-bar');
+            const timerText = document.getElementById('timer-text');
+            timerBar.style.width = '100%';
+            timerText.innerText = `⏳ ${timeLeft}s`;
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timerText.innerText = `⏳ ${timeLeft}s`;
+                const percentage = (timeLeft / 20) * 100;
+                timerBar.style.width = `${percentage}%`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!answeredCurrent) {
+                        answeredCurrent = true;
+                        playSound(false);
+                        showModal(false, "Hết giờ!", "Đã hết thời gian 20 giây cho câu hỏi này.");
+                    }
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedIndex, correctIndex, btnElement) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+            clearInterval(timer);
+
+            const isCorrect = (selectedIndex === correctIndex);
+            playSound(isCorrect);
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('current-score').innerText = score;
+                btnElement.classList.remove('bg-cyan-50', 'hover:bg-cyan-100', 'border-cyan-200');
+                btnElement.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+                showModal(true, "Chính xác! 🎉", questionsData[currentQuestionIndex].explanation);
+            } else {
+                btnElement.classList.remove('bg-cyan-50', 'hover:bg-cyan-100', 'border-cyan-200');
+                btnElement.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
+                showModal(false, "Chưa chính xác! ❌", questionsData[currentQuestionIndex].explanation);
+            }
+        }
+
+        // Matching Game Special UI Handler
+        let selectedLeft = null;
+        let matchedPairsCount = 0;
+        function renderMatchingGame(q) {
+            matchedPairsCount = 0;
+            selectedLeft = null;
+
+            const container = document.getElementById('answers-container');
+            container.innerHTML = `
+                <p class="text-xs text-cyan-600 font-semibold mb-2">Bấm chọn 1 vế ở cột trái, sau đó bấm chọn vế tương ứng ở cột phải:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="matching-left" class="flex flex-col gap-2"></div>
+                    <div id="matching-right" class="flex flex-col gap-2"></div>
+                </div>
+            `;
+
+            const leftCol = document.getElementById('matching-left');
+            const rightCol = document.getElementById('matching-right');
+
+            let leftItems = q.pairs.map((p, i) => ({ text: p.left, id: i }));
+            let rightItems = q.pairs.map((p, i) => ({ text: p.right, id: i }));
+            
+            // Shuffle right items
+            rightItems.sort(() => Math.random() - 0.5);
+
+            leftItems.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 rounded-xl bg-cyan-50 hover:bg-cyan-100 border-2 border-cyan-200 text-left font-bold text-sm text-cyan-900 transition shadow-sm";
+                btn.innerText = item.text;
+                btn.dataset.id = item.id;
+                btn.onclick = () => {
+                    if (btn.classList.contains('bg-emerald-200')) return;
+                    leftCol.querySelectorAll('button').forEach(b => b.classList.remove('ring-4', 'ring-cyan-400'));
+                    btn.classList.add('ring-4', 'ring-cyan-400');
+                    selectedLeft = item.id;
+                };
+                leftCol.appendChild(btn);
+            });
+
+            rightItems.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 rounded-xl bg-cyan-50 hover:bg-cyan-100 border-2 border-cyan-200 text-left font-bold text-sm text-cyan-900 transition shadow-sm";
+                btn.innerText = item.text;
+                btn.dataset.id = item.id;
+                btn.onclick = () => {
+                    if (selectedLeft === null || btn.classList.contains('bg-emerald-200')) return;
+                    
+                    if (selectedLeft === item.id) {
+                        // Correct match
+                        playSound(true);
+                        btn.classList.remove('bg-cyan-50', 'border-cyan-200');
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+
+                        // Find matching left button
+                        const lBtn = Array.from(leftCol.children).find(b => b.dataset.id == selectedLeft);
+                        if (lBtn) {
+                            lBtn.classList.remove('bg-cyan-50', 'border-cyan-200', 'ring-4', 'ring-cyan-400');
+                            lBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+                        }
+
+                        selectedLeft = null;
+                        matchedPairsCount++;
+
+                        if (matchedPairsCount === q.pairs.length) {
+                            score++;
+                            document.getElementById('current-score').innerText = score;
+                            answeredCurrent = true;
+                            clearInterval(timer);
+                            showModal(true, "Hoàn thành nối cặp! 🎉", q.explanation);
+                        }
+                    } else {
+                        // Wrong match
+                        playSound(false);
+                        btn.classList.add('bg-rose-100', 'border-rose-500');
+                        setTimeout(() => btn.classList.remove('bg-rose-100', 'border-rose-500'), 600);
+                    }
+                };
+                rightCol.appendChild(btn);
+            });
+        }
+
+        function skipQuestion() {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+            clearInterval(timer);
+            playSound(false);
+            showModal(false, "Đã bỏ qua câu hỏi ⏭️", questionsData[currentQuestionIndex].explanation);
+        }
+
+        function showModal(isCorrect, title, message) {
+            const modal = document.getElementById('feedback-modal');
+            const icon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+
+            icon.innerText = isCorrect ? '🎉' : '💡';
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModalAndNext() {
+            document.getElementById('feedback-modal').classList.add('hidden');
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function endGame() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score}/15`;
+
+            let comment = "Bạn thực sự là một tuyên truyền viên xuất sắc! 🌟";
+            if (score < 10) {
+                comment = "Hãy cố gắng ôn tập thêm kiến thức phòng, chống ma túy nhé! 💪";
+            } else if (score < 15) {
+                comment = "Rất tốt! Bạn nắm vững hầu hết các quy tắc bảo vệ bản thân. 🛡️";
+            }
+            document.getElementById('final-comment').innerText = comment;
+
+            // Trigger confetti
+            try {
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
+            // Post message to parent container if embedded
+            try {
+                window.parent.postMessage({ type: 'GAME_COMPLETE', score: score, maxScore: 15 }, '*');
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+        }
+
+        function finishGame() {
+            alert("Cảm ơn bạn đã tham gia trò chơi giáo dục phòng, chống ma túy!");
+        }
+    </script>
+</body>
+</html>
